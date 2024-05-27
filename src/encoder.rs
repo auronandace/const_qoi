@@ -133,7 +133,7 @@ impl QoiEncoderInternal {
                     output_index += 1;
                 }
             } else if new_pixel.alpha == self.previous_pixel.alpha {
-                if self.byte_index == 3 || self.byte_index == 4 {
+                if (self.byte_index == 3 || self.byte_index == 4) && self.previous_pixel.is_same(new_pixel) {
                     (self, output, output_index) = self.run_chunk(input, output, output_index);
                 } else if let Some(diff) = new_pixel.diff(self.previous_pixel) {
                     output[output_index] = diff; // QOI_OP_DIFF: 2bit tag (01), 3x2bit rgb diff (00)
