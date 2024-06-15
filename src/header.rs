@@ -6,6 +6,7 @@ use crate::{
 
 /// The header data of a QOI image.
 #[allow(clippy::module_name_repetitions)]
+#[derive(Clone, Copy)]
 pub struct QoiHeader {
     data: QoiHeaderInternal,
 }
@@ -63,6 +64,7 @@ impl QoiHeader {
     }
 }
 
+#[derive(Clone, Copy)]
 pub struct QoiHeaderInternal {
     pub magic_bytes: [u8; 4],
     pub width: u32,

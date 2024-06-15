@@ -8,6 +8,7 @@ use crate::{
 };
 
 /// Indicates the progress of decoding.
+#[derive(Clone, Copy)]
 pub enum QoiDecoderProgress<const N: usize> {
     /// Returns [`QoiDecoderReady`] to indicate the decoder is ready for more input bytes.
     /// May return the amount of bytes with the array of bytes to take them from.
@@ -22,6 +23,7 @@ pub enum QoiDecoderProgress<const N: usize> {
 
 /// A streaming decoder for the QOI image format.
 #[allow(clippy::module_name_repetitions)]
+#[derive(Clone, Copy)]
 pub struct QoiDecoder<const N: usize> {
     data: QoiDecoderInternal<N>,
 }
@@ -64,6 +66,7 @@ impl<const N: usize> QoiDecoder<N> {
 }
 
 /// A streaming decoder for the QOI image format.
+#[derive(Clone, Copy)]
 pub struct QoiDecoderReady<const N: usize> {
     data: QoiDecoderInternal<N>,
 }
@@ -85,6 +88,7 @@ impl<const N: usize> QoiDecoderReady<N> {
     }
 }
 
+#[derive(Clone, Copy)]
 struct QoiDecoderInternal<const N: usize> {
     input: QoiInputBuffer<N>,            // stores chunk/end marker bytes and used for input index
     output: QoiOutputBuffer<N>,          // stores pixel bytes and used for output index
