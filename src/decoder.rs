@@ -207,8 +207,9 @@ impl<const N: usize> QoiDecoderInternal<N> {
                             } else {
                                 let four; (self.input, four) = self.input.read_byte();
                                 current_pixel = Pixel::new(one, two, three, four);
+                                self.partial_chunk = None;
                             }
-                        } else {current_pixel = Pixel::new(one, two, three, current_pixel.alpha);}
+                        } else {current_pixel = Pixel::new(one, two, three, current_pixel.alpha); self.partial_chunk = None;}
                     }
                 }
             }
@@ -220,6 +221,7 @@ impl<const N: usize> QoiDecoderInternal<N> {
         let mut should_break = false;
         if let PartialChunk::FourBytes(_, red, green, blue) = part {
             current_pixel = Pixel::new(red, green, blue, one);
+            self.partial_chunk = None;
         } else if self.all_input_processed() {
             self.partial_chunk = part.add_byte(one);
             should_break = true;
@@ -227,6 +229,7 @@ impl<const N: usize> QoiDecoderInternal<N> {
             let two; (self.input, two) = self.input.read_byte();
             if let PartialChunk::ThreeBytes(_, red, green) = part {
                 current_pixel = Pixel::new(red, green, one, two);
+                self.partial_chunk = None;
             } else if self.all_input_processed() {
                 self.partial_chunk = part.add_byte(one);
                 self.partial_chunk = part.add_byte(two);
@@ -235,12 +238,14 @@ impl<const N: usize> QoiDecoderInternal<N> {
                 let three; (self.input, three) = self.input.read_byte();
                 if let PartialChunk::TwoBytes(_, red) = part {
                     current_pixel = Pixel::new(red, one, two, three);
+                    self.partial_chunk = None;
                 } else if self.all_input_processed() {
                     self.partial_chunk = Some(PartialChunk::FourBytes(tag, one, two, three));
                     should_break = true;
                 } else {
                     let four; (self.input, four) = self.input.read_byte();
                     current_pixel = Pixel::new(one, two, three, four);
+                    self.partial_chunk = None;
                 }
             }
         }
@@ -251,6 +256,7 @@ impl<const N: usize> QoiDecoderInternal<N> {
         let mut should_break = false;
         if let PartialChunk::ThreeBytes(_, red, green) = part {
             current_pixel = Pixel::new(red, green, one, current_pixel.alpha);
+            self.partial_chunk = None;
         } else if self.all_input_processed() {
             self.partial_chunk = part.add_byte(one);
             should_break = true;
@@ -258,6 +264,7 @@ impl<const N: usize> QoiDecoderInternal<N> {
             let two; (self.input, two) = self.input.read_byte();
             if let PartialChunk::TwoBytes(_, red) = part {
                 current_pixel = Pixel::new(red, one, two, current_pixel.alpha);
+                self.partial_chunk = None;
             } else if self.all_input_processed() {
                 self.partial_chunk = part.add_byte(one);
                 self.partial_chunk = part.add_byte(two);
@@ -265,6 +272,7 @@ impl<const N: usize> QoiDecoderInternal<N> {
             } else {
                 let three; (self.input, three) = self.input.read_byte();
                 current_pixel = Pixel::new(one, two, three, current_pixel.alpha);
+                self.partial_chunk = None;
             }
         }
         (self, current_pixel, should_break)
