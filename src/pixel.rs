@@ -15,14 +15,9 @@ impl Pixel {
     pub const fn calculate_hash_index(self) -> usize { // guaranteed to output 0..=63
         (self.red as usize * 3 + self.green as usize * 5 + self.blue as usize * 7 + self.alpha as usize * 11) % 64
     }
-    // puts pixel data in output buffer and increments output index. used only in decoder.
     #[inline]
-    pub const fn to_output<const N: usize>(self, mut output: [u8; N], mut index: usize) -> ([u8; N], usize) {
-        output[index] = self.red; index += 1;
-        output[index] = self.green; index += 1;
-        output[index] = self.blue; index += 1;
-        output[index] = self.alpha; index += 1;
-        (output, index)
+    pub const fn to_array(self) -> [u8; 4] {
+        [self.red, self.green, self.blue, self.alpha]
     }
     // puts RGB chunk tag and data in output buffer and increments output index. used only in encoder.
     #[inline]
@@ -78,12 +73,6 @@ mod tests {
     const fn infallible_calculate_hash_index() {
         assert!(Pixel::new(0, 0, 0, 0).calculate_hash_index() == 0);
         assert!(Pixel::new(255, 255, 255, 255).calculate_hash_index() == 38);
-    }
-    #[test]
-    const fn infallible_to_output() {
-        let (output, index) = Pixel::new(0, 0, 0, 0).to_output([1, 1, 1, 1], 0);
-        assert!(is_identical(&output, &[0, 0, 0, 0]));
-        assert!(index == 4);
     }
     #[test]
     const fn infallible_rgb_to_output() {

@@ -11,7 +11,7 @@ pub enum QoiError {
     /// The provided output buffer is too small for the encoder. Shows the size in bytes.
     BufferTooSmall(usize),
     /// The magic bytes of the header are incorrect. Correct value is: "qoif" ([`113`, `111`, `105`, `102`]). Shows the encountered values.
-    InvalidMagicBytes(u8, u8, u8, u8),
+    InvalidMagicBytes(u8, u8, u8, u8), // TODO rename
     /// The channels value of the header is incorrect. Correct values are: `3` (RGB) or `4` (RGBA). Shows the encountered value.
     InvalidChannelsValue(u8),
     /// The colorspace value of the header is incorrect. Correct values are: `0` (sRGB with linear alpha) or `1` (all channels linear). Shows the encountered value.
@@ -30,6 +30,12 @@ pub enum QoiError {
     InputHeaderMismatch(u32, u32, u64),
     /// The input data is not divisible by specified channels. Shows total size of input data in bytes and specified channels.
     IncorrectInputData(usize, u8),
+    //Refactor, // TODO placeholder for refactoring errors
+    BadBufferSize(usize),
+    BadHeaderSize(usize),
+    BadInputSize(usize, usize),
+    BadEndMarkerSize(usize),
+    BadEndMarkerBytes([u8; 8]),
 }
 
 #[allow(clippy::many_single_char_names)]
@@ -50,6 +56,12 @@ impl core::fmt::Display for QoiError {
             Self::IncorrectPixelAmount(h, a) => write!(f, "Malformed input: header specified {h} pixels but only encountered {a} pixels"),
             Self::InputHeaderMismatch(w, h, i) => write!(f, "Specified {w} width and {h} height but input contains {i} pixels."),
             Self::IncorrectInputData(size, channels) => write!(f, "Malformed input: input data of {size} bytes detected which cannot represent {channels} byte pixels"),
+            //Self::Refactor => write!(f, "Not implemented!"), // FIXME
+            Self::BadBufferSize(size) => write!(f, "Buffer size must be 16 bytes or greater and divisible by 4, detected buffer size of {size} bytes"),
+            Self::BadHeaderSize(size) => write!(f, "Header size must be 14 bytes, detected header input of {size} bytes"),
+            Self::BadInputSize(input, max) => write!(f, "Input cannot be empty or exceed initial buffer size ({max}), detected input size of {input} bytes"),
+            Self::BadEndMarkerSize(size) => write!(f, "Wrong amount of bytes for end marker, detected {size} bytes"),
+            Self::BadEndMarkerBytes(end) => write!(f, "Wrong bytes for end marker, detected: {}, {}, {}, {}, {}, {}, {}, {}", end[0], end[1], end[2], end[3], end[4], end[5], end[6], end[7]),
         }
     }
 }

@@ -116,10 +116,7 @@ mod tests {
                      0, 0, 0, 2,              // width
                      0, 0, 0, 4,              // height
                      4,                       // channels
-                     0,                       // colorspace
-                     128, 128, 128, 128, 255, // RGBA chunk
-                     198,                     // Run chunk (amount 7)
-                     0, 0, 0, 0, 0, 0, 0, 1]; // end marker
+                     0];                      // colorspace
         let internal = QoiHeaderInternal::extract(&input);
         assert!(internal.is_ok());
         if let Ok(internal) = internal {
@@ -143,10 +140,7 @@ mod tests {
                      0, 0, 0, 2,              // width
                      0, 0, 0, 4,              // height
                      4,                       // channels
-                     0,                       // colorspace
-                     128, 128, 128, 128, 255, // RGBA chunk
-                     198,                     // Run chunk (amount 7)
-                     0, 0, 0, 0, 0, 0, 0, 1]; // end marker
+                     0];                      // colorspace
         let header = QoiHeaderInternal::extract(&input);
         assert!(header.is_ok());
         if let Ok(header) = header {
@@ -163,10 +157,7 @@ mod tests {
                      0, 0, 0, 2,              // width
                      0, 0, 0, 4,              // height
                      4,                       // channels
-                     0,                       // colorspace
-                     128, 128, 128, 128, 255, // RGBA chunk
-                     198,                     // Run chunk (amount 7)
-                     0, 0, 0, 0, 0, 0, 0, 1]; // end marker
+                     0];                      // colorspace
         let header = QoiHeaderInternal::extract(&input);
         assert!(header.is_err());
         if let Err(QoiError::InvalidMagicBytes(q, o, i, f)) = header {
@@ -182,9 +173,7 @@ mod tests {
                      0, 0, 0, 0,              // width (incorrect)
                      0, 0, 0, 0,              // height (incorrect)
                      4,                       // channels
-                     0,                       // colorspace
-                                              // no chunks = empty image (incorrect)
-                     0, 0, 0, 0, 0, 0, 0, 1]; // end marker
+                     0];                      // colorspace
         let header = QoiHeaderInternal::extract(&input);
         assert!(header.is_err());
         if let Err(QoiError::InvalidWidthHeight(width, height)) = header {
@@ -198,10 +187,7 @@ mod tests {
                      0, 0, 0, 2,              // width
                      0, 0, 0, 4,              // height
                      9,                       // channels (incorrect)
-                     0,                       // colorspace
-                     128, 128, 128, 128, 255, // RGBA chunk
-                     198,                     // Run chunk (amount 7)
-                     0, 0, 0, 0, 0, 0, 0, 1]; // end marker
+                     0];                      // colorspace
         let header = QoiHeaderInternal::extract(&input);
         assert!(header.is_err());
         if let Err(QoiError::InvalidChannelsValue(channels)) = header {
@@ -214,10 +200,7 @@ mod tests {
                      0, 0, 0, 2,              // width
                      0, 0, 0, 4,              // height
                      4,                       // channels
-                     9,                       // colorspace (incorrect)
-                     128, 128, 128, 128, 255, // RGBA chunk
-                     198,                     // Run chunk (amount 7)
-                     0, 0, 0, 0, 0, 0, 0, 1]; // end marker
+                     9];                      // colorspace (incorrect)
         let header = QoiHeaderInternal::extract(&input);
         assert!(header.is_err());
         if let Err(QoiError::InvalidColorspaceValue(colorspace)) = header {

@@ -92,6 +92,7 @@
 #![no_std]
 #![forbid(unsafe_code)]
 
+mod buffer;
 mod consts;
 mod decoder;
 mod encoder;
