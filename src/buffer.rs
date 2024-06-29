@@ -67,8 +67,7 @@ mod tests {
     #[test]
     const fn infallible_input_read_byte() {
         let mut buffer = QoiInputBuffer {data: [255, 56, 89, 0, 0], capacity: 3, index: 0};
-        let byte;
-        (buffer, byte) = buffer.read_byte();
+        let byte; (buffer, byte) = buffer.read_byte();
         assert!(is_identical(&buffer.data, &[255, 56, 89, 0, 0]));
         assert!(buffer.capacity == 3);
         assert!(buffer.index == 1);
@@ -101,8 +100,8 @@ mod tests {
     #[test]
     const fn infallible_output_get_all_bytes() {
         let mut buffer = QoiOutputBuffer {data: [255, 56, 0, 0, 0], space: 3};
-        let output;
-        (buffer, output) = buffer.get_all_bytes();
+        let output; (buffer, output) = buffer.get_all_bytes();
         assert!(is_identical(&output, &buffer.data));
+        assert!(buffer.space == buffer.data.len());
     }
 }
